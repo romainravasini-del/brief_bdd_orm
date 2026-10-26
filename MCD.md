@@ -1,7 +1,5 @@
----
-config:
-  theme: dark
----
+````markdown
+```mermaid
 flowchart TB
 
     USER["UTILISATEUR
@@ -14,6 +12,7 @@ flowchart TB
     is_active
     role"]
 
+    HERITAGE{"Héritage (XT)"}
 
     APPRENANT["APPRENANT
     ──────────────
@@ -85,3 +84,4 @@ flowchart TB
     SALLE ---|"0,n"| ASSOC_SE_DEROULER
     ASSOC_SE_DEROULER ---|"1,1"| SESSION
 ```
+````

@@ -1,4 +1,3 @@
-````markdown
 ```mermaid
 flowchart TB
 
@@ -84,4 +83,3 @@ flowchart TB
     SALLE ---|"0,n"| ASSOC_SE_DEROULER
     ASSOC_SE_DEROULER ---|"1,1"| SESSION
 ```
-````

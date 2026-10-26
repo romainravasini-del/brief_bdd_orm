@@ -1,0 +1,9 @@
+sqlmodel
+sqlalchemy
+alembic
+pydantic[email]
+streamlit
+pandas
+plotly
+bcrypt
+python-dotenv

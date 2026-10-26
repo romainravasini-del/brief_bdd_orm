@@ -217,4 +217,10 @@ marimo/_lsp/
 __marimo__/
 
 # Streamlit
-.streamlit/secrets.toml
+.streamlit/secrets
+
+# SQLite / Bases de données locales
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3

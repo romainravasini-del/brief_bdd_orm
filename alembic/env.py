@@ -9,9 +9,9 @@ from alembic import context
 # 1. Ajoute la racine du projet au chemin Python pour trouver le dossier 'app'
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# 2. Importez SQLModel et vos modèles pour qu'Alembic les détecte
+# 2. Importe SQLModel et ses modèles 
 from sqlmodel import SQLModel
-from app.models.models_users import User  # Remplacez 'User' par le nom exact de votre classe modèle si besoin
+from app.models.models_users import User  
 
 # Objet de configuration Alembic
 config = context.config
@@ -19,10 +19,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# 3. Liaison cruciale pour SQLModel
+# 3. Liaison importante pour SQLModel
 target_metadata = SQLModel.metadata
 
-# --- Le reste du code généré par défaut par Alembic ---
+# --- Code généré par défaut par Alembic ---
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")

@@ -6,87 +6,94 @@ MLD
 ```mermaid
 flowchart TB
 
-    USER["UTILISATEUR
+    APPRENANTS["apprenants
     ──────────────
-    id_utilisateur (PK)
-    nom
-    prenom
-    email
-    date_creation
-    is_active
-    role"]
+    id : integer (PK)
+    nom : varchar(50)
+    prenom : varchar(50)
+    email : varchar(255) (UK)
+    date_creation : datetime
+    is_active : boolean
+    role : varchar(50)
+    date_naissance : date
+    niveau_etude : varchar(50)
+    telephone : varchar(20)
+    date_inscription_plateforme : datetime"]
 
-    HERITAGE{"Héritage (XT)"}
-
-    APPRENANT["APPRENANT
+    FORMATEURS["formateurs
     ──────────────
-    date_naissance
-    niveau_etude
-    telephone
-    date_inscription_plateforme
-    certification_obtenue"]
+    id : integer (PK)
+    nom : varchar(50)
+    prenom : varchar(50)
+    email : varchar(255) (UK)
+    date_creation : datetime
+    is_active : boolean
+    role : varchar(50)
+    specialite : varchar(100)
+    date_embauche : date
+    taux_horaire : float
+    bio : text"]
 
-    FORMATEUR["FORMATEUR
+    STAFF["staff_pedagogiques
     ──────────────
-    specialite
-    date_embauche
-    taux_horaire
-    bio"]
+    id : integer (PK)
+    nom : varchar(50)
+    prenom : varchar(50)
+    email : varchar(255) (UK)
+    date_creation : datetime
+    is_active : boolean
+    role : varchar(50)
+    poste : varchar(100)
+    date_prise_fonction : date
+    responsabilites : text"]
 
-    STAFF["STAFF_PEDAGOGIQUE
+    ADMINS["admins
     ──────────────
-    poste
-    date_prise_fonction
-    responsabilites"]
+    id : integer (PK)
+    nom : varchar(50)
+    prenom : varchar(50)
+    email : varchar(255) (UK)
+    date_creation : datetime
+    is_active : boolean
+    role : varchar(50)
+    niveau_acces : varchar(50)
+    date_promotion : date"]
 
-    ADMIN["ADMIN
+    SALLES["salles
     ──────────────
-    niveau_acces
-    date_promotion"]
+    id : integer (PK)
+    nom : varchar(50) (UK)
+    capacite : integer
+    localisation : varchar(150)
+    equipements : text
+    is_active : boolean"]
 
-    SALLE["SALLE
+    SESSIONS["sessions
     ──────────────
-    id_salle (PK)
-    nom
-    capacite
-    localisation
-    equipements
-    is_active"]
+    id : integer (PK)
+    titre : varchar(100)
+    description : text
+    date_debut : datetime
+    date_fin : datetime
+    #salle_id : integer (FK)
+    #formateur_id : integer (FK)
+    capacite_max : integer
+    statut : varchar(50)
+    prerequis : text"]
 
-    SESSION["SESSION
+    INSCRIPTIONS["inscriptions
     ──────────────
-    id_session (PK)
-    titre
-    description
-    date_debut
-    date_fin
-    capacite_max
-    statut
-    prerequis"]
+    id : integer (PK)
+    #apprenant_id : integer (FK)
+    #session_id : integer (FK)
+    date_inscription : datetime
+    statut_inscription : varchar(50)
+    presence : boolean"]
 
-    ASSOC_INSCRIRE(["S'INSCRIRE
-    ──────────────
-    date_inscription
-    statut_inscription
-    presence"])
-
-    ASSOC_ANIMER(["ANIMER"])
-    ASSOC_SE_DEROULER(["SE DÉROULER"])
-
-    USER --- HERITAGE
-    HERITAGE --> APPRENANT
-    HERITAGE --> FORMATEUR
-    HERITAGE --> STAFF
-    HERITAGE --> ADMIN
-
-    APPRENANT ---|"0,n"| ASSOC_INSCRIRE
-    ASSOC_INSCRIRE ---|"0,n"| SESSION
-
-    FORMATEUR ---|"0,n"| ASSOC_ANIMER
-    ASSOC_ANIMER ---|"1,1"| SESSION
-
-    SALLE ---|"0,n"| ASSOC_SE_DEROULER
-    ASSOC_SE_DEROULER ---|"1,1"| SESSION
+    SESSIONS -->|"salle_id > id"| SALLES
+    SESSIONS -->|"formateur_id > id"| FORMATEURS
+    INSCRIPTIONS -->|"apprenant_id > id"| APPRENANTS
+    INSCRIPTIONS -->|"session_id > id"| SESSIONS
 ```
 
 MCD

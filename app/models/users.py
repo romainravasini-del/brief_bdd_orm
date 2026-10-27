@@ -2,6 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field, Column, JSON
+from pydantic import EmailStr
 
 
 class NiveauAccesEnum(str, Enum):
@@ -14,7 +15,7 @@ class UserBase(SQLModel, table=False):
     id: Optional[int] = Field(default=None, primary_key=True)
     nom: str = Field(max_length=50)
     prenom: str = Field(max_length=50)
-    email: str = Field(unique=True, index=True, max_length=255)
+    email: EmailStr= Field(unique=True, index=True, max_length = 255)
     date_creation: datetime = Field(default_factory=datetime.now)
     is_active: bool = Field(default=True)
     

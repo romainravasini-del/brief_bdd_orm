@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field
 from sqlalchemy import UniqueConstraint
+
 class StatutInscriptionEnum(str, Enum):
     ENREGISTRE = "ENREGISTRE"
     DESINSCRIT = "DESINSCRIT"

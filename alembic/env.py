@@ -12,6 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # 2. Importe SQLModel et ses modèles 
 from sqlmodel import SQLModel
 from app.models.models_users import User  
+from app.models.models_sessions import TrainingSession  # <-- Importation du nouveau modèle
 
 # Objet de configuration Alembic
 config = context.config

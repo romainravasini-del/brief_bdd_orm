@@ -33,3 +33,4 @@ def index():
 if __name__ == "__main__":
     create_db_and_tables()  # Crée les tables si elles n'existent pas encore
     app.run(debug=True)      # Mettre True pour que le serveur se recharge tout seul !
+    

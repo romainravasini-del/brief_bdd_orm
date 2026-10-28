@@ -1,8 +1,7 @@
 from sqlmodel import Session, select, func
-
 from models.inscriptions import Inscription, StatutInscriptionEnum
 from models.sessions import SessionFormation
-from schemas.inscription_schemas import InscriptionCreate
+from schemas.inscriptions_schemas import InscriptionCreate
 
 
 class ChevauchementSessionError(Exception):

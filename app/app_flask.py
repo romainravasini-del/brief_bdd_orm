@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlmodel import Session, select, func
-
+from pydantic import ValidationError
+from app.schemas.users_schemas import ApprenantCreate
 from app.database import engine, create_db_and_tables
 from app.models.users import Apprenant, Formateur, StaffPedagogique, Admin
 from app.models.salles import Salle
@@ -33,4 +34,42 @@ def index():
 if __name__ == "__main__":
     create_db_and_tables()  # Crée les tables si elles n'existent pas encore
     app.run(debug=True)      # Mettre True pour que le serveur se recharge tout seul !
-    
+
+@app.___("/users", methods=["GET", "POST"])
+def manage_users():
+    # 1. Si l'utilisateur a cliqué sur "Ajouter un apprenant" (Formulaire POST)
+    if request.method == "___":
+        try:
+            # On récupère les données du formulaire HTML et on les donne au vigile Pydantic
+            donnees_valides = ApprenantCreate(
+                nom=request.form.get("nom"),
+                prenom=request.form.get("___"),
+                email=request.form.get("___"),
+                date_naissance=request.form.get("date_naissance"),
+                niveau_etude=request.form.get("niveau_etude"),
+                telephone=request.form.get("telephone") or None,
+            )
+
+            # Si Pydantic n'a pas levé d'erreur, on transforme en modèle SQLModel et on sauvegarde !
+            nouvel_eleve = Apprenant(**donnees_valides.model_dump())
+            with ___(engine) as session:
+                session.___(nouvel_eleve)
+                session.___()
+
+            flash("✅ Apprenant ajouté avec succès !", "success")
+            return redirect(url_for("manage_users"))
+
+        except ValidationError as e:
+            # Si l'élève a moins de 16 ans ou un faux email, Pydantic bloque ici !
+            message_erreur = e.errors()[0]["msg"]
+            flash(f"❌ Erreur de validation Pydantic : {message_erreur}", "danger")
+        except Exception as e:
+            flash(f"❌ Erreur base de données (ex: email déjà utilisé) : {e}", "danger")
+
+    # 2. Dans tous les cas (GET), on récupère la liste des utilisateurs pour les afficher
+    with Session(engine) as session:
+        # On limite à 50 pour que la page soit rapide même avec 2000 utilisateurs
+        apprenants = session.exec(select(___).limit(50)).all()
+        formateurs = session.exec(select(___).limit(50)).all()
+
+    return ___("users.html", apprenants=apprenants, formateurs=formateurs)

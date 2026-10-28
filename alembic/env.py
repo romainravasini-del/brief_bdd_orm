@@ -6,13 +6,17 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-# 1. Ajoute la racine du projet au chemin Python pour trouver le dossier 'app'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Ajoute la racine du projet au PYTHONPATH pour qu'Alembic trouve le dossier 'app'
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 2. Importe SQLModel et ses modèles 
 from sqlmodel import SQLModel
 from app.models.models_users import User  
 from app.models.models_sessions import TrainingSession  # <-- Importation du nouveau modèle
+from app.models.models_salles import Salle
+
+
 
 # Objet de configuration Alembic
 config = context.config

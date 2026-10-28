@@ -16,7 +16,6 @@ class UserBase(SQLModel, table=False):
     nom: str = Field(max_length=50)
     prenom: str = Field(max_length=50)
     email: EmailStr= Field(unique=True, index=True, max_length = 255)
-    default_factory=lambda: datetime.now(timezone.utc)
     date_creation: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = Field(default=True)
     

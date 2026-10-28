@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timezone
 from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 from app.models.sessions import StatutSessionEnum
@@ -28,6 +28,12 @@ class SessionCreate(BaseModel):
     # Vérifie que la date de fin est bien APRÈS la date de début !
     @model_validator(mode="after")
     def verifier_dates(self):
-        if self.date_fin <= self.date_debut:
-            raise ValueError("La date de fin doit être après la date de début !")
-        return self
+        # Si le navigateur HTML envoie une date sans timezone, on lui met UTC automatiquement :
+            if self.date_debut.tzinfo is None:
+                 self.date_debut = self.date_debut.replace(tzinfo=timezone.utc)
+            if self.date_fin.tzinfo is None:
+                 self.date_fin = self.date_fin.replace(tzinfo=timezone.utc)
+
+            if self.date_fin <= self.date_debut:
+                raise ValueError("La date de fin doit être après la date de début !")
+            return self

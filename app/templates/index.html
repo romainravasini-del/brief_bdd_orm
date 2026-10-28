@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CF-Tech - Gestion des Formations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🎓 CF-Tech ERP</a>
+        <div>
+            <a class="btn btn-light btn-sm" href="/users">👥 Utilisateurs</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="mb-4">📊 Tableau de Bord (Dashboard)</h1>
+
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h3>{{nb_apprenants}}</h3>
+                <p class="text-muted mb-0">Apprenants</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h3>{{nb_formateurs}}</h3>
+                <p class="text-muted mb-0">Formateurs</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h3>{{nb_salles}}</h3>
+                <p class="text-muted mb-0">Salles</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h3>{{nb_sessions}}</h3>
+                <p class="text-muted mb-0">Sessions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

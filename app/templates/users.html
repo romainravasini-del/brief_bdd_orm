@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CF-Tech - Utilisateurs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🎓 CF-Tech ERP</a>
+        <a class="btn btn-light btn-sm" href="/">⬅ Retour Dashboard</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Zone pour afficher les messages d'alerte Pydantic (succès en vert / erreur en rouge) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Colonne gauche : Formulaire d'ajout d'un Apprenant -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4">
+                <h4>➕ Nouvel Apprenant</h4>
+                <form method="POST" action="/users">
+                    <div class="mb-2">
+                        <label>Nom</label>
+                        <input type="text" name="nom" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Prénom</label>
+                        <input type="text" name="prenom" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Date de naissance (≥ 16 ans)</label>
+                        <input type="date" name="date_naissance" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Téléphone (10 chiffres)</label>
+                        <input type="text" name="telephone" class="form-control" placeholder="0612345678">
+                    </div>
+                    <div class="mb-3">
+                        <label>Niveau d'étude</label>
+                        <input type="text" name="niveau_etude" class="form-control" placeholder="Bac+2">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Ajouter (Test Pydantic)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Colonne droite : Liste des Apprenants -->
+        <div class="col-md-8">
+            <div class="card shadow-sm p-3">
+                <h4>📋 Liste des Apprenants</h4>
+                <table class="table table-striped mt-2">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom & Prénom</th>
+                            <th>Email</th>
+                            <th>Naissance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in apprenants %}
+                        <tr>
+                            <td>{{ a.id }}</td>
+                            <td>{{ a.nom }} {{ a.prenom }}</td>
+                            <td>{{ a.email }}</td>
+                            <td>{{ a.date_naissance }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

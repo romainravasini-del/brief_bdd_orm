@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pydantic import ValidationError
 from sqlmodel import Session, select, func
-
 from app.database import engine, create_db_and_tables
 from app.models.users import Apprenant, Formateur, StaffPedagogique, Admin
 from app.models.salles import Salle
 from app.models.sessions import SessionFormation
 from app.models.inscriptions import Inscription
-from app.schemas.users_schemas import ApprenantCreate, FormateurCreate, AdminCreate
+from app.schemas.users_schemas import (
+    ApprenantCreate,
+    FormateurCreate,
+    StaffCreate,
+    AdminCreate,
+)
 from app.schemas.sessions_schemas import SalleCreate, SessionCreate
 from app.schemas.inscriptions_schemas import InscriptionCreate
 from app.auth.validators import is_salle_disponible, inscrire_apprenant
@@ -61,6 +65,23 @@ def manage_users():
                     )
                     session.add(Formateur(**data.model_dump()))
 
+                elif type_user == "staff":
+                    raw_resp = request.form.get("responsabilites", "").strip()
+                    resp_dict = (
+                        {"missions": [r.strip() for r in raw_resp.split(",") if r.strip()]}
+                        if raw_resp
+                        else None
+                    )
+                    data = StaffCreate(
+                        nom=request.form.get("nom"),
+                        prenom=request.form.get("prenom"),
+                        email=request.form.get("email"),
+                        poste=request.form.get("poste"),
+                        date_prise_fonction=request.form.get("date_prise_fonction"),
+                        responsabilites=resp_dict,
+                    )
+                    session.add(StaffPedagogique(**data.model_dump()))
+
                 elif type_user == "admin":
                     data = AdminCreate(
                         nom=request.form.get("nom"),
@@ -84,10 +105,15 @@ def manage_users():
     with Session(engine) as session:
         apprenants = session.exec(select(Apprenant).limit(50)).all()
         formateurs = session.exec(select(Formateur).limit(50)).all()
+        staffs = session.exec(select(StaffPedagogique).limit(50)).all()
         admins = session.exec(select(Admin).limit(50)).all()
 
     return render_template(
-        "users.html", apprenants=apprenants, formateurs=formateurs, admins=admins
+        "users.html",
+        apprenants=apprenants,
+        formateurs=formateurs,
+        staffs=staffs,
+        admins=admins,
     )
 
 
@@ -98,10 +124,17 @@ def manage_sessions():
         try:
             with Session(engine) as session:
                 if action == "creer_salle":
+                    raw_eq = request.form.get("equipements", "").strip()
+                    eq_dict = (
+                        {"materiel": [e.strip() for e in raw_eq.split(",") if e.strip()]}
+                        if raw_eq
+                        else None
+                    )
                     data_salle = SalleCreate(
                         nom=request.form.get("nom"),
                         capacite=request.form.get("capacite"),
                         localisation=request.form.get("localisation"),
+                        equipements=eq_dict,
                     )
                     session.add(Salle(**data_salle.model_dump()))
                     session.commit()

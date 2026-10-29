@@ -34,6 +34,7 @@
                     <input type="text" name="nom" class="form-control mb-2" placeholder="Nom (ex: Salle A101)" required>
                     <input type="number" name="capacite" class="form-control mb-2" placeholder="Capacité max (30)" required>
                     <input type="text" name="localisation" class="form-control mb-2" placeholder="Bâtiment Nord, 1er étage" required>
+                    <input type="text" name="equipements" class="form-control mb-2" placeholder="Équipements (ex: Projecteur, 20 PC, Fibre)">
                     <button type="submit" class="btn btn-secondary w-100">Créer la Salle</button>
                 </form>
             </div>
@@ -91,6 +92,25 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <!-- TABLEAU DES SALLES & ÉQUIPEMENTS (JSON) -->
+    <div class="card shadow-sm p-3 mb-4">
+        <h5>🏫 Salles & Équipements ({{ salles|length }})</h5>
+        <table class="table table-sm table-striped">
+            <thead><tr><th>ID</th><th>Nom</th><th>Localisation</th><th>Capacité</th><th>Équipements (JSON)</th></tr></thead>
+            <tbody>
+                {% for s in salles %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td class="fw-bold">{{ s.nom }}</td>
+                    <td>{{ s.localisation }}</td>
+                    <td>{{ s.capacite }} places</td>
+                    <td><code>{{ s.equipements or '-' }}</code></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <!-- TABLEAU DES SESSIONS PLANIFIÉES -->

@@ -24,10 +24,10 @@
         {% endfor %}
     {% endwith %}
 
-    <!-- 3 FORMULAIRES D'AJOUT CÔTE À CÔTE -->
+    <!-- 4 FORMULAIRES D'AJOUT CÔTE À CÔTE -->
     <div class="row mb-4">
         <!-- 1. Ajouter Apprenant -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm p-3 h-100">
                 <h5 class="text-primary">➕ Nouvel Apprenant</h5>
                 <form method="POST" action="/users">
@@ -45,7 +45,7 @@
         </div>
 
         <!-- 2. Ajouter Formateur -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm p-3 h-100">
                 <h5 class="text-success">➕ Nouveau Formateur</h5>
                 <form method="POST" action="/users">
@@ -62,8 +62,26 @@
             </div>
         </div>
 
-        <!-- 3. Ajouter Admin -->
-        <div class="col-md-4">
+        <!-- 3. Ajouter Staff Pédagogique -->
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 h-100">
+                <h5 class="text-warning">➕ Nouveau Staff</h5>
+                <form method="POST" action="/users">
+                    <input type="hidden" name="type_user" value="staff">
+                    <input type="text" name="nom" class="form-control mb-2" placeholder="Nom" required>
+                    <input type="text" name="prenom" class="form-control mb-2" placeholder="Prénom" required>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                    <input type="text" name="poste" class="form-control mb-2" placeholder="Poste (ex: Resp. Pédagogique)" required>
+                    <label class="small text-muted">Date de prise de fonction</label>
+                    <input type="date" name="date_prise_fonction" class="form-control mb-2" required>
+                    <input type="text" name="responsabilites" class="form-control mb-2" placeholder="Missions (ex: Planning, Salles)">
+                    <button type="submit" class="btn btn-warning w-100 fw-bold">Ajouter Staff</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. Ajouter Admin -->
+        <div class="col-md-3">
             <div class="card shadow-sm p-3 h-100">
                 <h5 class="text-danger">➕ Nouvel Admin</h5>
                 <form method="POST" action="/users">
@@ -99,7 +117,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-4">
                 <h5>👨‍🏫 Formateurs ({{ formateurs|length }})</h5>
                 <table class="table table-sm table-striped">
@@ -112,7 +130,20 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>🗂️ Staff Pédagogique ({{ staffs|length }})</h5>
+                <table class="table table-sm table-striped">
+                    <thead><tr><th>ID</th><th>Nom</th><th>Poste</th><th>Missions (JSON)</th></tr></thead>
+                    <tbody>
+                        {% for st in staffs %}
+                        <tr><td>{{ st.id }}</td><td>{{ st.nom }} {{ st.prenom }}</td><td>{{ st.poste }}</td><td><small>{{ st.responsabilites or '-' }}</small></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-4">
                 <h5>👑 Admins ({{ admins|length }})</h5>
                 <table class="table table-sm table-striped">

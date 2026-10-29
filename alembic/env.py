@@ -16,6 +16,15 @@ from app.models.models_users import User
 from app.models.models_sessions import TrainingSession  # <-- Importation du nouveau modèle
 from app.models.models_salles import Salle
 
+from sqlmodel import SQLModel
+# Modèles historiques des premières migrations Alembic (Xavier)
+from app.models.models_users import User  
+from app.models.models_sessions import TrainingSession
+# Modèles complets de l'application CF-Tech (Romain)
+from app.models.salles import Salle
+from app.models.users import Apprenant, Formateur, StaffPedagogique, Admin
+from app.models.sessions import SessionFormation
+from app.models.inscriptions import Inscription
 
 
 # Objet de configuration Alembic

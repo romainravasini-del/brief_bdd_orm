@@ -1,23 +1,26 @@
 import sys
 import time
-from sqlmodel import Session, create_engine, select
+from sqlmodel import Session, create_engine, select, delete
 from app.models.models_users import User, UserRole
 from app.models.models_salles import Salle
 from app.models.models_sessions import TrainingSession
 
-# Connexion à la base de données SQLite
+
+# Connexion ciblée 
 sqlite_url = "sqlite:///cftech.db"
 engine = create_engine(sqlite_url, echo=False)
 
 def reset_database():
-    """Remet à zéro toutes les données de la base."""
+    """Remet à zéro toutes les données de la base avec la syntaxe SQLModel moderne."""
     print(" Nettoyage de la base de données...")
     with Session(engine) as session:
-        session.query(TrainingSession).delete()
-        session.query(User).delete()
-        session.query(Salle).delete()
+        # Utilisation de delete() compatible SQLModel 2.0+ pour éviter les warnings
+        session.exec(delete(TrainingSession))
+        session.exec(delete(User))
+        session.exec(delete(Salle))
         session.commit()
-    print(" Base de données nettoyée avec succès !\n")
+    print("✅ Base de données nettoyée avec succès !\n")
+
 
 def run_demo():
     

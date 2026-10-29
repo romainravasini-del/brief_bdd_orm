@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine, Session
 
 # 1. Charger l'URL depuis le fichier .env
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./cftech.db")
+load_dotenv(override=True)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./cftech-2.db")
 
 # 2. Créer le moteur SQLModel
 engine = create_engine(DATABASE_URL, echo=True)

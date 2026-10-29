@@ -1,26 +1,29 @@
 import sys
 import time
-from sqlmodel import Session, create_engine, select
+from sqlmodel import Session, create_engine, select, delete
 from app.models.models_users import User, UserRole
 from app.models.models_salles import Salle
 from app.models.models_sessions import TrainingSession
 
-# Connexion à la base de données SQLite
+
+# Connexion ciblée 
 sqlite_url = "sqlite:///cftech.db"
 engine = create_engine(sqlite_url, echo=False)
 
 def reset_database():
-    """Remet à zéro toutes les données de la base."""
+    """Remet à zéro toutes les données de la base avec la syntaxe SQLModel moderne."""
     print(" Nettoyage de la base de données...")
     with Session(engine) as session:
-        session.query(TrainingSession).delete()
-        session.query(User).delete()
-        session.query(Salle).delete()
+        # Utilisation de delete() compatible SQLModel 2.0+ pour éviter les warnings
+        session.exec(delete(TrainingSession))
+        session.exec(delete(User))
+        session.exec(delete(Salle))
         session.commit()
-    print(" Base de données nettoyée avec succès !\n")
+    print("✅ Base de données nettoyée avec succès !\n")
+
 
 def run_demo():
-    """Joue un scénario complet de test et de démonstration progressif."""
+    
     # Nettoyage automatique au lancement pour éviter les doublons
     reset_database()
     time.sleep(1)
@@ -60,7 +63,7 @@ def run_demo():
         session.add(salle1)
         session.commit()
         session.refresh(salle1)
-        print(f"   ✔️ Lab '{salle1.nom}' (Capacité : {salle1.capacite} postes) enregistré avec la stack :\n      -> {salle1.equipements}\n")
+        print(f"    Lab '{salle1.nom}' (Capacité : {salle1.capacite} postes) enregistré avec la stack :\n      -> {salle1.equipements}\n")
         time.sleep(1.5)
 
         # 3. Test des Sessions de travail / technique
@@ -85,7 +88,7 @@ def run_demo():
         users = session.exec(select(User)).all()
         print(f"\n[Utilisateurs enregistrés : {len(users)}]")
         for u in users:
-            print(f"   - {u.nom} ({u.email}) | Rôle : 👑 {u.role.value.upper()}")
+            print(f"   - {u.nom} ({u.email}) | Rôle :  {u.role.value.upper()}")
             time.sleep(0.4)
 
         # Affichage des salles / labs
@@ -96,7 +99,7 @@ def run_demo():
             print(f"     Matériel / Stack : {s.equipements}")
             time.sleep(0.4)
 
-        print("\n✨ Démonstration exécutée avec succès !")
+        print("\n Démonstration exécutée avec succès !")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "reset":

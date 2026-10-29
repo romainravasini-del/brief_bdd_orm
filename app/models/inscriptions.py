@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timezone
 from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field
@@ -19,6 +19,6 @@ class Inscription(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     apprenant_id: int = Field(foreign_key="apprenants.id")
     session_id: int = Field(foreign_key="sessions.id")
-    date_inscription: datetime = Field(default_factory=datetime.now)
+    date_inscription: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     statut_inscription: StatutInscriptionEnum = Field(default=StatutInscriptionEnum.ENREGISTRE)
     presence: Optional[bool] = Field(default=None)

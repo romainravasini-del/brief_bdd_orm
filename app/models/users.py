@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field, Column, JSON
@@ -16,7 +16,7 @@ class UserBase(SQLModel, table=False):
     nom: str = Field(max_length=50)
     prenom: str = Field(max_length=50)
     email: EmailStr= Field(unique=True, index=True, max_length = 255)
-    date_creation: datetime = Field(default_factory=datetime.now)
+    date_creation: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = Field(default=True)
     
     @property 
@@ -34,7 +34,7 @@ class Apprenant(UserBase, table=True):
     date_naissance: date
     niveau_etude: Optional[str] = Field(default=None, max_length=50)
     telephone: Optional[str] = Field(default=None, max_length=20)
-    date_inscription_plateforme: datetime = Field(default_factory=datetime.now)
+    date_inscription_plateforme: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     certification_obtenue: Optional[str] = Field(default=None, max_length=100)
 
 class Formateur(UserBase, table=True):

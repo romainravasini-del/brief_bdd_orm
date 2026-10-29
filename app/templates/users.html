@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CF-Tech - Utilisateurs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🎓 CF-Tech ERP</a>
+        <div>
+            <a class="btn btn-light btn-sm me-2" href="/">📊 Dashboard</a>
+            <a class="btn btn-warning btn-sm fw-bold" href="/sessions">📅 Salles, Sessions & Inscriptions</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- 3 FORMULAIRES D'AJOUT CÔTE À CÔTE -->
+    <div class="row mb-4">
+        <!-- 1. Ajouter Apprenant -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 h-100">
+                <h5 class="text-primary">➕ Nouvel Apprenant</h5>
+                <form method="POST" action="/users">
+                    <input type="hidden" name="type_user" value="apprenant">
+                    <input type="text" name="nom" class="form-control mb-2" placeholder="Nom" required>
+                    <input type="text" name="prenom" class="form-control mb-2" placeholder="Prénom" required>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                    <label class="small text-muted">Date de naissance (≥ 16 ans)</label>
+                    <input type="date" name="date_naissance" class="form-control mb-2" required>
+                    <input type="text" name="telephone" class="form-control mb-2" placeholder="Téléphone (0612345678)">
+                    <input type="text" name="niveau_etude" class="form-control mb-2" placeholder="Niveau (ex: Bac+2)">
+                    <button type="submit" class="btn btn-primary w-100">Ajouter Apprenant</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. Ajouter Formateur -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 h-100">
+                <h5 class="text-success">➕ Nouveau Formateur</h5>
+                <form method="POST" action="/users">
+                    <input type="hidden" name="type_user" value="formateur">
+                    <input type="text" name="nom" class="form-control mb-2" placeholder="Nom" required>
+                    <input type="text" name="prenom" class="form-control mb-2" placeholder="Prénom" required>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                    <input type="text" name="specialite" class="form-control mb-2" placeholder="Spécialité (ex: Python, SQL)" required>
+                    <label class="small text-muted">Date d'embauche (&lt; aujourd'hui)</label>
+                    <input type="date" name="date_embauche" class="form-control mb-2" required>
+                    <input type="number" step="0.5" name="taux_horaire" class="form-control mb-2" placeholder="Taux horaire (€/h ≥ 0)" required>
+                    <button type="submit" class="btn btn-success w-100">Ajouter Formateur</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 3. Ajouter Admin -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 h-100">
+                <h5 class="text-danger">➕ Nouvel Admin</h5>
+                <form method="POST" action="/users">
+                    <input type="hidden" name="type_user" value="admin">
+                    <input type="text" name="nom" class="form-control mb-2" placeholder="Nom" required>
+                    <input type="text" name="prenom" class="form-control mb-2" placeholder="Prénom" required>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                    <label class="small text-muted">Niveau d'accès</label>
+                    <select name="niveau_acces" class="form-select mb-2">
+                        <option value="ADMIN_STANDARD">ADMIN_STANDARD</option>
+                        <option value="ADMIN_RESEAU">ADMIN_RESEAU</option>
+                        <option value="SUPERADMIN">SUPERADMIN</option>
+                    </select>
+                    <label class="small text-muted">Date de promotion</label>
+                    <input type="date" name="date_promotion" class="form-control mb-2" required>
+                    <button type="submit" class="btn btn-danger w-100">Ajouter Admin</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLEAUX DES UTILISATEURS -->
+    <div class="card shadow-sm p-3 mb-4">
+        <h5>📋 Apprenants ({{ apprenants|length }})</h5>
+        <table class="table table-sm table-striped">
+            <thead><tr><th>ID</th><th>Nom & Prénom</th><th>Email</th><th>Naissance</th><th>Niveau</th></tr></thead>
+            <tbody>
+                {% for a in apprenants %}
+                <tr><td>{{ a.id }}</td><td>{{ a.nom }} {{ a.prenom }}</td><td>{{ a.email }}</td><td>{{ a.date_naissance }}</td><td>{{ a.niveau_etude }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>👨‍🏫 Formateurs ({{ formateurs|length }})</h5>
+                <table class="table table-sm table-striped">
+                    <thead><tr><th>ID</th><th>Nom</th><th>Spécialité</th><th>Taux (€/h)</th></tr></thead>
+                    <tbody>
+                        {% for f in formateurs %}
+                        <tr><td>{{ f.id }}</td><td>{{ f.nom }} {{ f.prenom }}</td><td>{{ f.specialite }}</td><td>{{ f.taux_horaire }} €</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>👑 Admins ({{ admins|length }})</h5>
+                <table class="table table-sm table-striped">
+                    <thead><tr><th>ID</th><th>Nom</th><th>Email</th><th>Accès</th></tr></thead>
+                    <tbody>
+                        {% for adm in admins %}
+                        <tr><td>{{ adm.id }}</td><td>{{ adm.nom }} {{ adm.prenom }}</td><td>{{ adm.email }}</td><td><span class="badge bg-dark">{{ adm.niveau_acces.value }}</span></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

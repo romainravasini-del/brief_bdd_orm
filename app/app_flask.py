@@ -103,10 +103,10 @@ def manage_users():
             flash(f"❌ Erreur BDD : {e}", "danger")
 
     with Session(engine) as session:
-        apprenants = session.exec(select(Apprenant).limit(50)).all()
-        formateurs = session.exec(select(Formateur).limit(50)).all()
-        staffs = session.exec(select(StaffPedagogique).limit(50)).all()
-        admins = session.exec(select(Admin).limit(50)).all()
+        apprenants = session.exec(select(Apprenant)).all()
+        formateurs = session.exec(select(Formateur)).all()
+        staffs = session.exec(select(StaffPedagogique)).all()
+        admins = session.exec(select(Admin)).all()
 
     return render_template(
         "users.html",

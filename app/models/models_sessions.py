@@ -1,5 +1,13 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field
+from enum import Enum
+
+#class StatutSessionEnum a liberer pour la V2 alembic
+class StatutSessionEnum(str, Enum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
+    ARCHIVED = "ARCHIVED"
+
 
 class TrainingSession(SQLModel, table=True):
     """
@@ -22,3 +30,5 @@ class TrainingSession(SQLModel, table=True):
 
     # Description optionnelle de la session
     description: Optional[str] = Field(default=None, description="Détails optionnels sur la session")
+    # a liberer pour la V2
+    statut: StatutSessionEnum = Field(default=StatutSessionEnum.OPEN)

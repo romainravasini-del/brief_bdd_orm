@@ -20,5 +20,6 @@ class SessionFormation(SQLModel, table=True):
     salle_id: int = Field(foreign_key="salles.id")
     formateur_id: int = Field(foreign_key="formateurs.id")
     capacite_max: int = Field(ge=1)
-    statut: StatutSessionEnum = Field(default=StatutSessionEnum.OPEN)
+    # Ajouté par migration Alembic v2 :
+    # statut: StatutSessionEnum = Field(default=StatutSessionEnum.OPEN)
     prerequis: Optional[dict] = Field(default=None, sa_column=Column(JSON))

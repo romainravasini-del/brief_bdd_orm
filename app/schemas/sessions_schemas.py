@@ -9,7 +9,8 @@ class SalleCreate(BaseModel):
     nom: str = Field(min_length=1, max_length=50)
     capacite: int = Field(ge=1)  # Doit être >= 1
     localisation: str = Field(min_length=1, max_length=150)
-    equipements: Optional[dict] = None  # Dictionnaire JSON
+    # Ajouté par migration Alembic v3 :
+    # equipements: Optional[dict] = None  # Dictionnaire JSON
     is_active: bool = True
 
 
@@ -22,7 +23,8 @@ class SessionCreate(BaseModel):
     salle_id: int = Field(ge=1)
     formateur_id: int = Field(ge=1)
     capacite_max: int = Field(ge=1)
-    statut: StatutSessionEnum = StatutSessionEnum.OPEN
+    # Ajouté par migration Alembic v2 :
+    # statut: StatutSessionEnum = StatutSessionEnum.OPEN
     prerequis: Optional[dict] = None
 
     # Vérifie que la date de fin est bien APRÈS la date de début !

@@ -110,29 +110,21 @@ def generer_base_presentation():
         conn.commit()
         conn.close()
 
-    print("🚀 1. Création / Vérification des tables SQLModel dans cftech.db...")
+    print("🚀 1. Recréation des tables initiales (V1 sans statut/equipements/SUPERADMIN) dans cftech.db...")
+    from sqlmodel import SQLModel
+    SQLModel.metadata.drop_all(engine)
     create_db_and_tables()
 
     with Session(engine) as db:
-        print("🧹 2. Nettoyage des anciennes données...")
-        db.exec(delete(Inscription))
-        db.exec(delete(SessionFormation))
-        db.exec(delete(Salle))
-        db.exec(delete(Apprenant))
-        db.exec(delete(Formateur))
-        db.exec(delete(StaffPedagogique))
-        db.exec(delete(Admin))
-        db.commit()
-
         # =====================================================================
-        # A. ADMINS (8 Admins - Table : admins)
+        # A. ADMINS (8 Admins - Table : admins - sans SUPERADMIN en V1)
         # =====================================================================
-        print("👑 3. Insertion de 8 Administrateurs...")
+        print("👑 2. Insertion de 8 Administrateurs (ADMIN_STANDARD / ADMIN_RESEAU)...")
         admins_data = [
-            ("Dupont", "Romain", "romain.admin@cftech.fr", NiveauAccesEnum.SUPERADMIN, date(2022, 9, 1)),
+            ("Dupont", "Romain", "romain.admin@cftech.fr", NiveauAccesEnum.ADMIN_STANDARD, date(2022, 9, 1)),
             ("Martin", "Xavier", "xavier.reseau@cftech.fr", NiveauAccesEnum.ADMIN_RESEAU, date(2023, 1, 15)),
             ("Benali", "Oussama", "oussama.admin@cftech.fr", NiveauAccesEnum.ADMIN_STANDARD, date(2023, 3, 10)),
-            ("Moreau", "Hélène", "helene.moreau@cftech.fr", NiveauAccesEnum.SUPERADMIN, date(2021, 6, 1)),
+            ("Moreau", "Hélène", "helene.moreau@cftech.fr", NiveauAccesEnum.ADMIN_STANDARD, date(2021, 6, 1)),
             ("Legrand", "Stéphane", "stephane.legrand@cftech.fr", NiveauAccesEnum.ADMIN_RESEAU, date(2023, 9, 12)),
             ("Garnier", "Céline", "celine.garnier@cftech.fr", NiveauAccesEnum.ADMIN_STANDARD, date(2024, 1, 20)),
             ("Chevalier", "Marc", "marc.chevalier@cftech.fr", NiveauAccesEnum.ADMIN_RESEAU, date(2024, 4, 5)),
@@ -152,7 +144,7 @@ def generer_base_presentation():
         # =====================================================================
         # B. STAFF PÉDAGOGIQUE (10 Staffs - Table : staff_pedagogiques)
         # =====================================================================
-        print("🗂️  4. Insertion de 10 membres du Staff Pédagogique...")
+        print("🗂️  3. Insertion de 10 membres du Staff Pédagogique...")
         staffs_data = [
             ("Moreau", "Claire", "claire.moreau@cftech.fr", "Directrice Pédagogique", date(2021, 9, 1), ["Validation des programmes", "Supervision des formateurs", "Audit Qualiopi"]),
             ("Lefebvre", "Thomas", "thomas.lefebvre@cftech.fr", "Coordinateur Planning & Salles", date(2022, 5, 15), ["Affectation des salles", "Gestion des conflits horaires", "Suivi matériel"]),
@@ -180,14 +172,13 @@ def generer_base_presentation():
         # =====================================================================
         # C. FORMATEURS (20 Formateurs - Table : formateurs)
         # =====================================================================
-        print("👨‍🏫 5. Insertion de 20 Formateurs...")
+        print("👨‍🏫 4. Insertion de 20 Formateurs...")
         formateurs_objs = []
         for i in range(20):
             nom = NOMS[(i * 3) % len(NOMS)]
             prenom = PRENOMS[(i * 2 + 1) % len(PRENOMS)].strip().capitalize()
             spec, bio, taux = SPECIALITES_FORMATEURS[i % len(SPECIALITES_FORMATEURS)]
             email = f"{prenom.lower()}.{nom.lower()}.form{i+1}@cftech.fr"
-            # Remplacer les caractères accentués dans l'email
             for acc, sans in [("é", "e"), ("è", "e"), ("ê", "e"), ("ë", "e"), ("ï", "i"), ("î", "i"), ("ô", "o"), ("ç", "c"), ("à", "a")]:
                 email = email.replace(acc, sans)
 
@@ -211,7 +202,7 @@ def generer_base_presentation():
         # =====================================================================
         # D. APPRENANTS (200 Apprenants - Table : apprenants)
         # =====================================================================
-        print("🧑‍🎓 6. Insertion de 200 Apprenants...")
+        print("🧑‍🎓 5. Insertion de 200 Apprenants...")
         apprenants_objs = []
         for i in range(1, 201):
             nom = random.choice(NOMS)
@@ -223,7 +214,7 @@ def generer_base_presentation():
                 clean_n = clean_n.replace(acc, sans)
 
             email = f"{clean_p}.{clean_n}{i}@etu.cftech.fr"
-            annee_naiss = random.randint(1988, 2006)  # Tous >= 18 ans (respecte >= 16 ans)
+            annee_naiss = random.randint(1988, 2006)
             mois_naiss = random.randint(1, 12)
             jour_naiss = random.randint(1, 28)
             tel = f"0{random.choice([6, 7])}{i:08d}"
@@ -245,30 +236,29 @@ def generer_base_presentation():
             db.refresh(obj)
 
         # =====================================================================
-        # E. SALLES (12 Salles - Table : salles)
+        # E. SALLES (12 Salles - Table : salles - sans equipements en V1)
         # =====================================================================
-        print("🏫 7. Insertion de 12 Salles et Équipements (JSON)...")
+        print("🏫 6. Insertion de 12 Salles (sans equipements avant Alembic v3)...")
         salles_data = [
-            ("Salle A101 - Ada Lovelace", 25, "Bâtiment Nord, 1er étage", ["Vidéoprojecteur 4K", "25 PC Linux Ubuntu", "Tableau Blanc", "Fibre 10Gbps"]),
-            ("Salle A102 - Guido van Rossum", 20, "Bâtiment Nord, 1er étage", ["Écran 85 pouces", "20 PC Dual-Boot", "Prises RJ45 Cat6A"]),
-            ("Labo B201 - Alan Turing (IA & GPU)", 16, "Bâtiment Sud, 2ème étage", ["Serveur GPU NVIDIA H100", "16 Stations 64Go RAM", "Climatisation Redondante"]),
-            ("Labo B202 - Edgar Codd (BDD & SQL)", 24, "Bâtiment Sud, 2ème étage", ["Cluster PostgreSQL local", "24 Postes DBeaver/VS Code", "Double projecteur"]),
-            ("Salle C001 - Grace Hopper (Mini-Lab)", 3, "Rez-de-chaussée, Aile Est", ["Écran tactile interactif", "3 Postes DevOps", "Switch Cisco 48 ports"]),
-            ("Salle C002 - Margaret Hamilton", 12, "Rez-de-chaussée, Aile Est", ["12 Mac Studio M2", "Tableau numérique", "Visioconférence Owl Pro"]),
-            ("Labo Cyber D301 - Kevin Mitnick", 18, "Bâtiment Ouest, 3ème étage", ["Réseau isolé Sandbox", "Baie de brassage Cisco", "18 Postes Kali Linux"]),
-            ("Labo Cloud D302 - Kelsey Hightower", 20, "Bâtiment Ouest, 3ème étage", ["Cluster Kubernetes local", "20 Postes Ubuntu Server", "Onduleurs APC"]),
-            ("Salle E105 - Donald Knuth", 30, "Bâtiment Central, 1er étage", ["Vidéoprojecteur Laser", "30 Postes Windows/WSL2", "Micros sans fil"]),
-            ("Salle E106 - Barbara Liskov", 15, "Bâtiment Central, 1er étage", ["15 Stations Linux", "Tableau triptyque", "Sonde de qualité d'air"]),
-            ("Amphithéâtre Linus Torvalds", 60, "Bâtiment Central, RDC", ["Sonorisation Dolby", "Double Rétroprojecteur HD", "Régie Streaming Twitch/YouTube"]),
-            ("Amphithéâtre Tim Berners-Lee", 80, "Bâtiment Nord, RDC", ["Scène équipée", "Écran géant LED", "Captation multi-caméras"]),
+            ("Salle A101 - Ada Lovelace", 25, "Bâtiment Nord, 1er étage"),
+            ("Salle A102 - Guido van Rossum", 20, "Bâtiment Nord, 1er étage"),
+            ("Labo B201 - Alan Turing (IA & GPU)", 16, "Bâtiment Sud, 2ème étage"),
+            ("Labo B202 - Edgar Codd (BDD & SQL)", 24, "Bâtiment Sud, 2ème étage"),
+            ("Salle C001 - Grace Hopper (Mini-Lab)", 3, "Rez-de-chaussée, Aile Est"),
+            ("Salle C002 - Margaret Hamilton", 12, "Rez-de-chaussée, Aile Est"),
+            ("Labo Cyber D301 - Kevin Mitnick", 18, "Bâtiment Ouest, 3ème étage"),
+            ("Labo Cloud D302 - Kelsey Hightower", 20, "Bâtiment Ouest, 3ème étage"),
+            ("Salle E105 - Donald Knuth", 30, "Bâtiment Central, 1er étage"),
+            ("Salle E106 - Barbara Liskov", 15, "Bâtiment Central, 1er étage"),
+            ("Amphithéâtre Linus Torvalds", 60, "Bâtiment Central, RDC"),
+            ("Amphithéâtre Tim Berners-Lee", 80, "Bâtiment Nord, RDC"),
         ]
         salles_objs = []
-        for nom, cap, loc, eq_list in salles_data:
+        for nom, cap, loc in salles_data:
             schema = SalleCreate(
                 nom=nom,
                 capacite=cap,
                 localisation=loc,
-                equipements={"materiel": eq_list},
             )
             obj = Salle(**schema.model_dump())
             db.add(obj)
@@ -278,9 +268,9 @@ def generer_base_presentation():
             db.refresh(obj)
 
         # =====================================================================
-        # F. SESSIONS DE FORMATION (25 Sessions - Table : sessions)
+        # F. SESSIONS DE FORMATION (25 Sessions - Table : sessions - sans statut en V1)
         # =====================================================================
-        print("📅 8. Planification de 25 Sessions (sans aucun conflit horaire)...")
+        print("📅 7. Planification de 25 Sessions (sans statut avant Alembic v2)...")
         titres_cours = [
             ("Modélisation BDD & ORM avec SQLModel", "Conception MCD/MLD, héritage SQLModel et validation stricte avec Pydantic v2.", "Python Intermédiaire", ["VS Code", "SQLite"]),
             ("Migrations de Schéma avec Alembic", "Gestion du cycle de vie de la base de données, upgrade/downgrade et autogenerate.", "Bases SQL", ["Alembic", "Git"]),
@@ -303,9 +293,8 @@ def generer_base_presentation():
             titre_base, desc, niv, outils = titres_cours[idx % len(titres_cours)]
             titre = titre_base if idx < len(titres_cours) else f"{titre_base} - Promo #{idx // len(titres_cours) + 1}"
 
-            # La session idx == 2 est notre session Mini-Lab à 3 places max (Salle C001 d'indice 4)
             if idx == 2:
-                salle_choisie = salles_objs[4]  # Capacité 3 places
+                salle_choisie = salles_objs[4]
                 cap_max = 3
             else:
                 salle_choisie = salles_objs[idx % len(salles_objs)]
@@ -313,7 +302,6 @@ def generer_base_presentation():
 
             formateur_choisi = formateurs_objs[idx % len(formateurs_objs)]
 
-            # Décaler chaque session par jour pour garantir zéro conflit horaire
             dt_debut = base_date + timedelta(days=idx)
             dt_fin = dt_debut + timedelta(hours=8)
 
@@ -325,7 +313,6 @@ def generer_base_presentation():
                 salle_id=salle_choisie.id,
                 formateur_id=formateur_choisi.id,
                 capacite_max=cap_max,
-                statut=StatutSessionEnum.OPEN,
                 prerequis={"niveau": niv, "outils": outils},
             )
             assert is_salle_disponible(

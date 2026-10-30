@@ -7,8 +7,9 @@ from pydantic import EmailStr
 
 class NiveauAccesEnum(str, Enum):
     ADMIN_STANDARD = "ADMIN_STANDARD"
-    SUPERADMIN = "SUPERADMIN"
     ADMIN_RESEAU = "ADMIN_RESEAU"
+    # Ajouté par migration Alembic v4 :
+    # SUPERADMIN = "SUPERADMIN"
 
 # 1. Classe mère abstraite (table=False) : partage les champs communs
 class UserBase(SQLModel, table=False):

@@ -9,5 +9,6 @@ class Salle(SQLModel, table=True):
     nom: str = Field(unique=True, index=True, max_length=50)
     capacite: int = Field(ge=1)  # Doit être >= 1
     localisation: str = Field(max_length=150)
-    equipements: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+    # Ajouté par migration Alembic v3 :
+    # equipements: Optional[dict] = Field(default=None, sa_column=Column(JSON))
     is_active: bool = Field(default=True)

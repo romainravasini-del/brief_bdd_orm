@@ -17,15 +17,15 @@ class SessionPleineError(Exception):
 def is_salle_disponible(
     db: Session, salle_id: int, debut: datetime, fin: datetime
 ) -> bool:
-    conflit = db.exec(
-        select(SessionFormation).where(
-            SessionFormation.salle_id == salle_id,
-            SessionFormation.statut != StatutSessionEnum.ARCHIVED,
-            SessionFormation.date_debut < fin,
-            SessionFormation.date_fin > debut,
-        )
-    ).first()
+    query = select(SessionFormation).where(
+        SessionFormation.salle_id == salle_id,
+        SessionFormation.date_debut < fin,
+        SessionFormation.date_fin > debut,
+    )
+    if hasattr(SessionFormation, "statut"):
+        query = query.where(SessionFormation.statut != StatutSessionEnum.ARCHIVED)
 
+    conflit = db.exec(query).first()
     return conflit is None
 
 
@@ -34,7 +34,7 @@ def inscrire_apprenant(db: Session, data: InscriptionCreate) -> Inscription:
     if nouvelle is None:
         raise ValueError(f"Session {data.session_id} introuvable.")
 
-    if nouvelle.statut != StatutSessionEnum.OPEN:
+    if hasattr(nouvelle, "statut") and nouvelle.statut != StatutSessionEnum.OPEN:
         raise ValueError("Cette session n'est pas ouverte aux inscriptions.")
 
     # 1. Vérifier la capacité maximale

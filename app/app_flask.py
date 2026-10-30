@@ -20,7 +20,8 @@ app = Flask(__name__)
 app.secret_key = "cftech-secret-key"
 
 
-@app.route("/")
+@app.route("/") 
+#Chaque route est un onglet de la page web
 def index():
     with Session(engine) as session:
         nb_apprenants = session.exec(select(func.count(Apprenant.id))).one()
@@ -38,6 +39,7 @@ def index():
 
 
 @app.route("/users", methods=["GET", "POST"])
+#Dans cette section POST nous permet de créer un nouvel utilisateur
 def manage_users():
     if request.method == "POST":
         type_user = request.form.get("type_user", "apprenant")
@@ -118,23 +120,17 @@ def manage_users():
 
 
 @app.route("/sessions", methods=["GET", "POST"])
+#Même logique pour les autres catégories
 def manage_sessions():
     if request.method == "POST":
         action = request.form.get("action")
         try:
             with Session(engine) as session:
                 if action == "creer_salle":
-                    raw_eq = request.form.get("equipements", "").strip()
-                    eq_dict = (
-                        {"materiel": [e.strip() for e in raw_eq.split(",") if e.strip()]}
-                        if raw_eq
-                        else None
-                    )
                     data_salle = SalleCreate(
                         nom=request.form.get("nom"),
                         capacite=request.form.get("capacite"),
                         localisation=request.form.get("localisation"),
-                        equipements=eq_dict,
                     )
                     session.add(Salle(**data_salle.model_dump()))
                     session.commit()

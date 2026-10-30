@@ -101,11 +101,12 @@ def generer_base_presentation():
     random.seed(42)
     base_dir = os.path.abspath(os.path.dirname(__file__))
     src_db = os.path.join(base_dir, "cftech.db")
+    os.makedirs(os.path.join(base_dir, "alembic", "versions"), exist_ok=True)
 
-    # 0. Supprimer les anciennes tables parasites au singulier si elles existent
+    # 0. Supprimer les anciennes tables parasites et réinitialiser alembic_version
     if os.path.exists(src_db):
         conn = sqlite3.connect(src_db)
-        for old_tbl in ("salle", "apprenant", "formateur", "staff_pedagogique", "admin", "session", "inscription"):
+        for old_tbl in ("alembic_version", "salle", "apprenant", "formateur", "staff_pedagogique", "admin", "session", "inscription"):
             conn.execute(f"DROP TABLE IF EXISTS {old_tbl}")
         conn.commit()
         conn.close()

@@ -8,8 +8,7 @@ flowchart TB
     prenom
     email
     date_creation
-    is_active
-    role"]
+    is_active"]
 
     HERITAGE{"Héritage (XT)"}
 
